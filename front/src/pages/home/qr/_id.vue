@@ -29,7 +29,12 @@
       </v-card-text>
 
       <v-card-actions class="d-flex justify-end">
-        <v-btn x-large color="red" @click="displayState.deleteDialog = true">
+        <v-btn
+          v-if="displayState.isEdit"
+          x-large
+          color="red"
+          @click="displayState.deleteDialog = true"
+        >
           <v-icon>mdi-delete</v-icon>
         </v-btn>
         <v-btn x-large color="primary" @click="displayState.editDialog = true">
@@ -48,27 +53,11 @@
     </v-dialog>
 
     <v-dialog v-model="displayState.deleteDialog">
-      <v-card>
-        <v-card-title>削除の確認</v-card-title>
-        <v-card-text>
-          <p>この項目を削除しますか？</p>
-          <p>削除した項目を元に戻すことはできません。</p>
-          <p>QRキー: {{ id }}</p>
-        </v-card-text>
-        <v-card-actions class="justify-end">
-          <v-btn color="red" x-large @click="deleteItem">
-            <v-icon class="mr-2">mdi-delete</v-icon>
-            削除
-          </v-btn>
-          <v-btn
-            color="primary"
-            x-large
-            @click="displayState.deleteDialog = false"
-          >
-            キャンセル
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+      <DeleteDialog
+        :id="id"
+        @close="displayState.deleteDialog = false"
+        @deleteItem="deleteItem"
+      ></DeleteDialog>
     </v-dialog>
   </div>
 </template>
@@ -87,6 +76,7 @@ import EditDialog from '../../../components/EditDialog.vue';
 import firebase from 'firebase';
 import Note from '../../../lib/classes/model/note';
 import Auth from '../../../lib/auth';
+import DeleteDialog from '../../../components/DeleteDialog.vue';
 
 const EditMode = {
   EDIT: 0,
@@ -108,7 +98,7 @@ interface State {
 }
 
 export default defineComponent({
-  components: { EditDialog },
+  components: { DeleteDialog, EditDialog },
   setup(_: {}, context: SetupContext) {
     const id = context.root.$route.params['id'];
     const firestore = firebase.firestore();
