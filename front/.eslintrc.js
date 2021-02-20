@@ -5,6 +5,7 @@ module.exports = {
     node: true
   },
   extends: [
+    'plugin:vue/recommended',
     'plugin:vue/essential',
     'eslint:recommended',
     'prettier',
@@ -12,9 +13,8 @@ module.exports = {
     'plugin:prettier/recommended'
   ],
   plugins: ['prettier'],
-  parser: 'vue-eslint-parser',
   parserOptions: {
-    parser: 'babel-eslint',
+    parser: '@typescript-eslint/parser',
     ecmaVersion: 2020,
     sourceType: 'module'
   },

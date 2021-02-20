@@ -38,7 +38,7 @@
       </v-card-actions>
     </v-card>
 
-    <v-dialog fullscreen v-model="displayState.editDialog">
+    <v-dialog v-model="displayState.editDialog" fullscreen>
       <EditDialog
         v-model="displayState.text"
         :is-edit="displayState.isEdit"
@@ -60,6 +60,9 @@ import {
 } from '@vue/composition-api';
 import marked from 'marked';
 import EditDialog from '../../../components/EditDialog.vue';
+import firebase from 'firebase';
+import Note from '../../../lib/classes/model/note';
+import Auth from '../../../lib/auth';
 
 const EditMode = {
   EDIT: 0,
@@ -69,38 +72,74 @@ const EditMode = {
 interface DisplayState {
   editMode: number;
   isEdit: ComputedRef<Boolean>;
-  text: string;
+  text: ComputedRef<String>;
   html: ComputedRef<String>;
   editDialog: boolean;
+}
+
+interface State {
+  item: Note;
+  user: firebase.User | null;
 }
 
 export default defineComponent({
   components: { EditDialog },
   setup(_: {}, context: SetupContext) {
     const id = context.root.$route.params['id'];
+    const firestore = firebase.firestore();
+    const itemsRef = firestore.collection('/items');
+
+    const item = new Note();
+
+    const state = reactive<State>({
+      item,
+      user: null
+    });
 
     let displayState: UnwrapRef<DisplayState>;
     displayState = reactive<DisplayState>({
       editMode: EditMode.EDIT,
       isEdit: computed<Boolean>(() => displayState.editMode === EditMode.EDIT),
-      text:
-        '## 引っ越しの荷物A\n' +
-        '\n' +
-        '### これにはいろんな荷物入れた\n' +
-        '\n' +
-        '*割れ物注意*\n' +
-        '\n' +
-        '- 荷物A\n' +
-        '- 荷物B\n' +
-        '- 荷物C\n' +
-        '\n',
+      text: computed<String>(() => item.text),
       html: computed<String>(() => marked(displayState.text)),
       editDialog: false
     });
 
-    const save = (text: string) => {
+    const getItem = async () => {
+      const user = await Auth.getUser();
+      state.user = user;
+
+      const querySnapshot = await itemsRef
+        .doc(user.uid)
+        .collection('items')
+        .where('id', '==', id)
+        .get();
+      if (querySnapshot.docs.length) {
+        const doc = querySnapshot.docs[0];
+        const d = doc.data();
+        item.fromData(doc.id, d);
+        displayState.editMode = EditMode.EDIT;
+        return;
+      }
+      displayState.editMode = EditMode.CREATE;
+    };
+    getItem();
+
+    const save = async (text: string) => {
       displayState.editDialog = false;
-      displayState.text = text;
+      item.text = text;
+      const user = state.user;
+      const ref = itemsRef.doc(user.uid).collection('items');
+
+      if (displayState.isEdit) {
+        await ref.doc(state.item.itemID).update(item.toObject());
+      } else {
+        item.id = id;
+        item.text = text;
+        item.images = [];
+        await ref.add(item.toObject());
+      }
+      getItem();
     };
     const cancel = () => {
       displayState.editDialog = false;
@@ -110,6 +149,7 @@ export default defineComponent({
       id,
 
       displayState,
+      state,
 
       save,
       cancel
