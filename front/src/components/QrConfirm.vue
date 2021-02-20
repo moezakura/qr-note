@@ -11,14 +11,18 @@
     </v-card-text>
 
     <v-card-actions class="d-block">
-      <v-btn block class="my-2 mx-0" x-large @click="reRead">読み取り直す</v-btn>
-      <v-btn block class="my-2 mx-0" color="primary" x-large @click="submit">続行</v-btn>
+      <v-btn block class="my-2 mx-0" x-large @click="reRead"
+        >読み取り直す</v-btn
+      >
+      <v-btn block class="my-2 mx-0" color="primary" x-large @click="submit"
+        >続行</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
 
 <script lang="ts">
-import {defineComponent, SetupContext} from '@vue/composition-api';
+import { defineComponent, SetupContext } from '@vue/composition-api';
 
 interface Props {
   qrData: string;
@@ -29,7 +33,7 @@ export default defineComponent({
     qrData: {
       type: String,
       required: true
-    },
+    }
   },
   setup(_: Props, context: SetupContext) {
     const reRead = () => {
@@ -40,13 +44,12 @@ export default defineComponent({
       context.emit('submit');
     };
 
-
     return {
       reRead,
-      submit,
+      submit
     };
   }
-})
+});
 </script>
 
 <style lang="scss" scoped></style>

@@ -7,13 +7,17 @@
     </v-dialog>
 
     <v-dialog v-model="displayState.qrConfirmDialog" persistent>
-      <QrConfirm :qr-data="state.qrData" @reRead="start" @submit="submit"></QrConfirm>
+      <QrConfirm
+        :qr-data="state.qrData"
+        @reRead="start"
+        @submit="submit"
+      ></QrConfirm>
     </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive} from '@vue/composition-api';
+import { defineComponent, reactive } from '@vue/composition-api';
 import QrReader from '../../components/QrReader.vue';
 import QrConfirm from '../../components/QrConfirm.vue';
 
@@ -28,30 +32,30 @@ interface State {
 
 export default defineComponent({
   name: 'index',
-  components: {QrConfirm, QrReader},
+  components: { QrConfirm, QrReader },
   setup() {
     const displayState = reactive<DisplayState>({
       previewDialog: false,
-      qrConfirmDialog: false,
+      qrConfirmDialog: false
     });
     const state = reactive<State>({
-      qrData: '',
+      qrData: ''
     });
 
     const start = () => {
       displayState.previewDialog = true;
       displayState.qrConfirmDialog = false;
-    }
+    };
 
     const readQR = (data: string) => {
       displayState.previewDialog = false;
       displayState.qrConfirmDialog = true;
       state.qrData = data;
-    }
+    };
 
     const submit = () => {
       alert('!!!');
-    }
+    };
 
     return {
       displayState,
@@ -60,8 +64,7 @@ export default defineComponent({
       start,
       readQR,
       submit
-    }
+    };
   }
-})
+});
 </script>
-

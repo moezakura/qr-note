@@ -1,10 +1,10 @@
 const fs = require('fs');
-const {generateRoutes} = require('vue-route-generator');
+const { generateRoutes } = require('vue-route-generator');
 
 const code = generateRoutes({
-    pages: './pages'
+  pages: './pages'
 });
 
-const writeCode = code.toString().replace(/@/g, "..")
+const writeCode = code.toString().replace(/@/g, '..');
 
-fs.writeFileSync('./routes/routes.js', writeCode)
+fs.writeFileSync('./routes/routes.js', writeCode);
