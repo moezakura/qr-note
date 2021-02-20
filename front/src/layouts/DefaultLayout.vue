@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-app-bar>
-      <span>noco</span>
+      <span>qr-note</span>
     </v-app-bar>
     
     <v-main class="mt-4">
