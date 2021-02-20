@@ -29,7 +29,7 @@
       </v-card-text>
 
       <v-card-actions class="d-flex justify-end">
-        <v-btn x-large color="red">
+        <v-btn x-large color="red" @click="displayState.deleteDialog = true">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
         <v-btn x-large color="primary" @click="displayState.editDialog = true">
@@ -45,6 +45,30 @@
         @save="save"
         @cancel="cancel"
       ></EditDialog>
+    </v-dialog>
+
+    <v-dialog v-model="displayState.deleteDialog">
+      <v-card>
+        <v-card-title>削除の確認</v-card-title>
+        <v-card-text>
+          <p>この項目を削除しますか？</p>
+          <p>削除した項目を元に戻すことはできません。</p>
+          <p>QRキー: {{ id }}</p>
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn color="red" x-large @click="deleteItem">
+            <v-icon class="mr-2">mdi-delete</v-icon>
+            削除
+          </v-btn>
+          <v-btn
+            color="primary"
+            x-large
+            @click="displayState.deleteDialog = false"
+          >
+            キャンセル
+          </v-btn>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -75,6 +99,7 @@ interface DisplayState {
   text: ComputedRef<String>;
   html: ComputedRef<String>;
   editDialog: boolean;
+  deleteDialog: boolean;
 }
 
 interface State {
@@ -102,7 +127,8 @@ export default defineComponent({
       isEdit: computed<Boolean>(() => displayState.editMode === EditMode.EDIT),
       text: computed<String>(() => item.text),
       html: computed<String>(() => marked(displayState.text)),
-      editDialog: false
+      editDialog: false,
+      deleteDialog: false
     });
 
     const getItem = async () => {
@@ -128,7 +154,7 @@ export default defineComponent({
     const save = async (text: string) => {
       displayState.editDialog = false;
       item.text = text;
-      const user = state.user;
+      const user = state.user!;
       const ref = itemsRef.doc(user.uid).collection('items');
 
       if (displayState.isEdit) {
@@ -145,6 +171,14 @@ export default defineComponent({
       displayState.editDialog = false;
     };
 
+    const deleteItem = async () => {
+      const user = state.user!;
+      const ref = itemsRef.doc(user.uid).collection('items');
+      await ref.doc(state.item.itemID).delete();
+      const router = context.root.$router;
+      router.push('/home/');
+    };
+
     return {
       id,
 
@@ -152,7 +186,8 @@ export default defineComponent({
       state,
 
       save,
-      cancel
+      cancel,
+      deleteItem
     };
   }
 });
