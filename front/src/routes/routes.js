@@ -6,6 +6,11 @@ function sign_in_index() {
     /* webpackChunkName: "sign_in-index" */ '../pages/sign_in/index.vue'
   );
 }
+function home_qr__id() {
+  return import(
+    /* webpackChunkName: "home-qr-id" */ '../pages/home/qr/_id.vue'
+  );
+}
 
 export default [
   {
@@ -17,5 +22,10 @@ export default [
     name: 'sign_in',
     path: '/sign_in',
     component: sign_in_index
+  },
+  {
+    name: 'home-qr-id',
+    path: '/home/qr/:id?',
+    component: home_qr__id
   }
 ];

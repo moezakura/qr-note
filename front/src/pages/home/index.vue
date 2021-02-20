@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from '@vue/composition-api';
+import { defineComponent, reactive, SetupContext } from '@vue/composition-api';
 import QrReader from '../../components/QrReader.vue';
 import QrConfirm from '../../components/QrConfirm.vue';
 
@@ -33,7 +33,7 @@ interface State {
 export default defineComponent({
   name: 'index',
   components: { QrConfirm, QrReader },
-  setup() {
+  setup(_: {}, context: SetupContext) {
     const displayState = reactive<DisplayState>({
       previewDialog: false,
       qrConfirmDialog: false
@@ -54,7 +54,9 @@ export default defineComponent({
     };
 
     const submit = () => {
-      alert('!!!');
+      const router = context.root.$router;
+      const qrData = encodeURIComponent(state.qrData);
+      router.push(`/home/qr/${qrData}`);
     };
 
     return {
