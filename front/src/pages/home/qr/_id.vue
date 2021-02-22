@@ -22,7 +22,7 @@
       </v-card-text>
 
       <v-card-text>
-        <v-btn x-large block>
+        <v-btn x-large block @click="displayState.imageDialog = true">
           <v-icon class="mr-1">mdi-image</v-icon>
           紐付いている画像一覧を表示
         </v-btn>
@@ -43,12 +43,20 @@
       </v-card-actions>
     </v-card>
 
+    <v-dialog v-model="displayState.imageDialog" fullscreen>
+      <ImageDialog
+        :images="displayState.images"
+        @close="displayState.imageDialog = false"
+        @imageAdd="imageAdd"
+      ></ImageDialog>
+    </v-dialog>
+
     <v-dialog v-model="displayState.editDialog" fullscreen>
       <EditDialog
         v-model="displayState.text"
         :is-edit="displayState.isEdit"
         @save="save"
-        @cancel="cancel"
+        @cancel="editCancel"
       ></EditDialog>
     </v-dialog>
 
@@ -72,11 +80,12 @@ import {
   UnwrapRef
 } from '@vue/composition-api';
 import marked from 'marked';
-import EditDialog from '../../../components/EditDialog.vue';
 import firebase from 'firebase';
+import EditDialog from '../../../components/EditDialog.vue';
 import Note from '../../../lib/classes/model/note';
 import Auth from '../../../lib/auth';
 import DeleteDialog from '../../../components/DeleteDialog.vue';
+import ImageDialog from '../../../components/ImageDialog.vue';
 
 const EditMode = {
   EDIT: 0,
@@ -88,8 +97,10 @@ interface DisplayState {
   isEdit: ComputedRef<Boolean>;
   text: ComputedRef<String>;
   html: ComputedRef<String>;
+  images: ComputedRef<Array>;
   editDialog: boolean;
   deleteDialog: boolean;
+  imageDialog: boolean;
 }
 
 interface State {
@@ -98,7 +109,7 @@ interface State {
 }
 
 export default defineComponent({
-  components: { DeleteDialog, EditDialog },
+  components: { ImageDialog, DeleteDialog, EditDialog },
   setup(_: {}, context: SetupContext) {
     const id = context.root.$route.params['id'];
     const firestore = firebase.firestore();
@@ -117,8 +128,10 @@ export default defineComponent({
       isEdit: computed<Boolean>(() => displayState.editMode === EditMode.EDIT),
       text: computed<String>(() => item.text),
       html: computed<String>(() => marked(displayState.text)),
+      images: computed<Array>(() => item.images),
       editDialog: false,
-      deleteDialog: false
+      deleteDialog: false,
+      imageDialog: false
     });
 
     const getItem = async () => {
@@ -157,7 +170,17 @@ export default defineComponent({
       }
       getItem();
     };
-    const cancel = () => {
+
+    const imageAdd = async (addFile: string) => {
+      const user = state.user!;
+      const ref = itemsRef.doc(user.uid).collection('items');
+      await ref.doc(state.item.itemID).update({
+        images: firebase.firestore.FieldValue.arrayUnion(addFile)
+      });
+      getItem();
+    };
+
+    const editCancel = () => {
       displayState.editDialog = false;
     };
 
@@ -176,11 +199,10 @@ export default defineComponent({
       state,
 
       save,
-      cancel,
+      editCancel,
+      imageAdd,
       deleteItem
     };
   }
 });
 </script>
-
-<style lang="scss" scoped></style>

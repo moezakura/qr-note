@@ -12,12 +12,12 @@
         保存
       </v-btn>
     </v-app-bar>
-    <v-card flat class="mx-2 mt-12">
+    <v-card flat class="mx-2 pt-12">
       <v-textarea
+        v-model="displayState.text"
         auto-grow
         counter
         height="100%"
-        v-model="displayState.text"
       ></v-textarea>
     </v-card>
   </v-card>
