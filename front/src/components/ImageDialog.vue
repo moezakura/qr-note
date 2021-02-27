@@ -21,13 +21,34 @@
       />
     </v-app-bar>
     <v-card flat class="mx-2 pt-12">
-      <v-img
-        v-for="(i, n) in images"
-        :key="i"
-        :src="i"
-        class="mb-4"
-        :class="{ 'mt-4': n === 0 }"
-      ></v-img>
+      <div v-for="(i, n) in images" :key="i">
+        <v-menu offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <v-img
+              v-bind="attrs"
+              :src="i"
+              class="mb-4"
+              :class="{ 'mt-4': n === 0 }"
+              v-on="on"
+            ></v-img>
+          </template>
+          <v-list>
+            <v-list-item @click="openNew(i)">
+              <v-list-item-title>
+                <v-icon>mdi-open-in-new</v-icon>
+                新しいタブで開く
+              </v-list-item-title>
+            </v-list-item>
+            <v-divider></v-divider>
+            <v-list-item>
+              <v-list-item-title>
+                <v-icon>mdi-delete</v-icon>
+                削除
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
     </v-card>
   </v-card>
 </template>
@@ -44,8 +65,8 @@ export default defineComponent({
   props: {
     images: {
       type: Array,
-      require: true,
-    },
+      require: true
+    }
   },
   setup(_: {}, context: SetupContext) {
     const fileSelect = ref<HTMLInputElement>();
@@ -82,14 +103,19 @@ export default defineComponent({
       context.emit('close');
     };
 
+    const openNew = (url: string) => {
+      window.open(url);
+    };
+
     return {
       fileSelect,
 
       newSelect,
       fileSelected,
       close,
+      openNew
     };
-  },
+  }
 });
 </script>
 
