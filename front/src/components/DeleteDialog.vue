@@ -25,8 +25,8 @@ export default defineComponent({
   props: {
     id: {
       type: String,
-      require: true
-    }
+      require: true,
+    },
   },
   setup(_: {}, context: SetupContext) {
     const deleteItem = () => {
@@ -38,9 +38,9 @@ export default defineComponent({
 
     return {
       deleteItem,
-      close
+      close,
     };
-  }
+  },
 });
 </script>
 

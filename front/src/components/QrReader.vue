@@ -2,9 +2,20 @@
   <v-card>
     <v-card-title>QRコードの読み取り</v-card-title>
     <v-card-text>
-      <video autoplay muted playsinline ref="video" width="100%" height="100%"></video>
-      <canvas class="video-canvas" ref="qrPreview" :width="`${displayState.videoWidth}px`"
-              :height="`${displayState.videoHeight}px`"></canvas>
+      <video
+        ref="video"
+        autoplay
+        muted
+        playsinline
+        width="100%"
+        height="100%"
+      ></video>
+      <canvas
+        ref="qrPreview"
+        class="video-canvas"
+        :width="`${displayState.videoWidth}px`"
+        :height="`${displayState.videoHeight}px`"
+      ></canvas>
     </v-card-text>
     <v-card-actions>
       <v-btn class="red" block x-large>閉じる</v-btn>
@@ -13,7 +24,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, reactive, ref, SetupContext} from '@vue/composition-api';
+import {
+  defineComponent,
+  onMounted,
+  reactive,
+  ref,
+  SetupContext,
+} from '@vue/composition-api';
 import jsQR from 'jsqr';
 
 interface DisplayState {
@@ -62,7 +79,9 @@ export default defineComponent({
         if (code) {
           setupContext.emit('read', code.data);
           window.clearInterval(state.qrReadInterval);
-          video.value!.srcObject.getTracks().forEach((track: any) => track.stop())
+          video
+            .value!.srcObject.getTracks()
+            .forEach((track: any) => track.stop());
           video.value!.srcObject = null;
         }
       } catch (e) {
@@ -74,9 +93,10 @@ export default defineComponent({
       try {
         const media = navigator.mediaDevices;
         video.value!.srcObject = await media.getUserMedia({
-          audio: false, video: {
-            facingMode: 'environment'
-          }
+          audio: false,
+          video: {
+            facingMode: 'environment',
+          },
         });
         state.qrReadInterval = window.setInterval(previewWithReadQR, 30);
       } catch (e) {
@@ -90,9 +110,9 @@ export default defineComponent({
 
       displayState,
       state,
-    }
-  }
-})
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>

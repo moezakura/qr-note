@@ -43,7 +43,7 @@ export default class Note {
     return {
       id: this.id,
       text: this.text,
-      images: this.images
+      images: this.images,
     };
   }
 }

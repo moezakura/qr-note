@@ -39,16 +39,16 @@ export default defineComponent({
   props: {
     isEdit: {
       type: Boolean,
-      require: true
+      require: true,
     },
     value: {
       type: String,
-      require: true
-    }
+      require: true,
+    },
   },
   setup(props: Props, context: SetupContext) {
     const displayState = reactive<DisplayState>({
-      text: props.value
+      text: props.value,
     });
 
     const save = () => {
@@ -63,9 +63,9 @@ export default defineComponent({
       displayState,
 
       save,
-      cancel
+      cancel,
     };
-  }
+  },
 });
 </script>
 

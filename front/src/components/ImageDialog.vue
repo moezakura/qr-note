@@ -44,8 +44,8 @@ export default defineComponent({
   props: {
     images: {
       type: Array,
-      require: true
-    }
+      require: true,
+    },
   },
   setup(_: {}, context: SetupContext) {
     const fileSelect = ref<HTMLInputElement>();
@@ -87,9 +87,9 @@ export default defineComponent({
 
       newSelect,
       fileSelected,
-      close
+      close,
     };
-  }
+  },
 });
 </script>
 

@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    node: true
+    node: true,
   },
   extends: [
     'plugin:vue/recommended',
@@ -10,16 +10,16 @@ module.exports = {
     'eslint:recommended',
     'prettier',
     'prettier/vue',
-    'plugin:prettier/recommended'
+    'plugin:prettier/recommended',
   ],
   plugins: ['prettier'],
   parserOptions: {
     parser: '@typescript-eslint/parser',
     ecmaVersion: 2020,
-    sourceType: 'module'
+    sourceType: 'module',
   },
   rules: {
     'no-extra-semi': 'warn',
-    quotes: ['warn', 'single']
-  }
+    quotes: ['warn', 'single'],
+  },
 };

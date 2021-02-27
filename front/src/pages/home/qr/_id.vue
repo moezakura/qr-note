@@ -77,7 +77,7 @@ import {
   computed,
   SetupContext,
   ComputedRef,
-  UnwrapRef
+  UnwrapRef,
 } from '@vue/composition-api';
 import marked from 'marked';
 import firebase from 'firebase';
@@ -89,7 +89,7 @@ import ImageDialog from '../../../components/ImageDialog.vue';
 
 const EditMode = {
   EDIT: 0,
-  CREATE: 1
+  CREATE: 1,
 };
 
 interface DisplayState {
@@ -119,7 +119,7 @@ export default defineComponent({
 
     const state = reactive<State>({
       item,
-      user: null
+      user: null,
     });
 
     let displayState: UnwrapRef<DisplayState>;
@@ -131,7 +131,7 @@ export default defineComponent({
       images: computed<Array>(() => item.images),
       editDialog: false,
       deleteDialog: false,
-      imageDialog: false
+      imageDialog: false,
     });
 
     const getItem = async () => {
@@ -175,7 +175,7 @@ export default defineComponent({
       const user = state.user!;
       const ref = itemsRef.doc(user.uid).collection('items');
       await ref.doc(state.item.itemID).update({
-        images: firebase.firestore.FieldValue.arrayUnion(addFile)
+        images: firebase.firestore.FieldValue.arrayUnion(addFile),
       });
       getItem();
     };
@@ -201,8 +201,8 @@ export default defineComponent({
       save,
       editCancel,
       imageAdd,
-      deleteItem
+      deleteItem,
     };
-  }
+  },
 });
 </script>

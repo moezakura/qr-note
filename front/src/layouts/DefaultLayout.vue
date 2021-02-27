@@ -17,7 +17,7 @@ import { defineComponent } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'default-layout',
-  setup() {}
+  setup() {},
 });
 </script>
 

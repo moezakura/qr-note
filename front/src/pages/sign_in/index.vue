@@ -41,9 +41,9 @@ export default defineComponent({
     };
 
     return {
-      signIn
+      signIn,
     };
-  }
+  },
 });
 </script>
 
