@@ -1,7 +1,9 @@
+import Image from '~/lib/classes/model/image';
+
 export default class Note {
   private _itemID: string = '';
   private _id: string = '';
-  private _images: string[] = [];
+  private _images: Image[] = [];
   private _text: string = '';
 
   get itemID(): string {
@@ -16,11 +18,11 @@ export default class Note {
     this._id = value;
   }
 
-  get images(): string[] {
+  get images(): Image[] {
     return this._images;
   }
 
-  set images(value: string[]) {
+  set images(value: Image[]) {
     this._images = value;
   }
 

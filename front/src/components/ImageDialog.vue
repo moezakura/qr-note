@@ -21,26 +21,26 @@
       />
     </v-app-bar>
     <v-card flat class="mx-2 pt-12">
-      <div v-for="(i, n) in images" :key="i">
+      <div v-for="(i, n) in images" :key="i.name">
         <v-menu offset-y>
           <template v-slot:activator="{ on, attrs }">
             <v-img
               v-bind="attrs"
-              :src="i"
+              :src="i.url"
               class="mb-4"
               :class="{ 'mt-4': n === 0 }"
               v-on="on"
             ></v-img>
           </template>
           <v-list>
-            <v-list-item @click="openNew(i)">
+            <v-list-item @click="openNew(i.url)">
               <v-list-item-title>
                 <v-icon>mdi-open-in-new</v-icon>
                 新しいタブで開く
               </v-list-item-title>
             </v-list-item>
             <v-divider></v-divider>
-            <v-list-item>
+            <v-list-item @click="deleteItem(i)">
               <v-list-item-title>
                 <v-icon>mdi-delete</v-icon>
                 削除
@@ -55,11 +55,12 @@
 
 <script lang="ts">
 import { defineComponent, ref, SetupContext } from '@vue/composition-api';
-import firebase from 'firebase';
 import { v4 as uuidv4 } from 'uuid';
 import FileReaderEx from '../lib/fileReaderEx';
 import ImageResize from '../lib/imageResize';
 import Auth from '../lib/auth';
+import { storage } from '~/lib/firebase';
+import Image from '~/lib/classes/model/image';
 
 export default defineComponent({
   props: {
@@ -89,11 +90,11 @@ export default defineComponent({
         const resizer = new ImageResize(r.result);
         const imageFile = await resizer.contain(1920);
 
-        const storageRef = firebase.storage().ref(`images/${user.uid}`);
+        const storageRef = storage.ref(`images/${user.uid}`);
         const ep = storageRef.child(fileName);
         await ep.put(imageFile);
         const downloadURL = await ep.getDownloadURL();
-        context.emit('imageAdd', downloadURL);
+        context.emit('imageAdd', new Image(fileName, downloadURL));
       } catch (e) {
         console.error(e);
       }
@@ -107,13 +108,18 @@ export default defineComponent({
       window.open(url);
     };
 
+    const deleteItem = (image: Image) => {
+      context.emit('deleteItem', image);
+    };
+
     return {
       fileSelect,
 
       newSelect,
       fileSelected,
       close,
-      openNew
+      openNew,
+      deleteItem
     };
   }
 });

@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
+import 'firebase/storage';
 
 const firebaseApp = firebase.initializeApp({
   apiKey: process.env.FIREBASE_API_KEY,
@@ -13,4 +14,14 @@ const firebaseApp = firebase.initializeApp({
   measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 });
 
-export const db = firebaseApp.firestore();
+const _db = firebaseApp.firestore();
+const _auth = firebaseApp.auth();
+const _storage = firebase.storage();
+if (process.env.NODE_ENV === 'local') {
+  _auth.useEmulator('http://localhost:9099');
+  _db.useEmulator('localhost', 8080);
+}
+
+export const db = _db;
+export const auth = _auth;
+export const storage = _storage;

@@ -48,6 +48,7 @@
         :images="displayState.images"
         @close="displayState.imageDialog = false"
         @imageAdd="imageAdd"
+        @deleteItem="openDeleteImageDialog"
       ></ImageDialog>
     </v-dialog>
 
@@ -67,6 +68,14 @@
         @deleteItem="deleteItem"
       ></DeleteDialog>
     </v-dialog>
+
+    <v-dialog v-model="displayState.deleteImageDialog">
+      <DeleteImageDialog
+        :image="state.deleteImage"
+        @close="displayState.deleteImageDialog = false"
+        @deleteItem="deleteImage"
+      ></DeleteImageDialog>
+    </v-dialog>
   </div>
 </template>
 
@@ -77,7 +86,7 @@ import {
   computed,
   SetupContext,
   ComputedRef,
-  UnwrapRef,
+  UnwrapRef
 } from '@vue/composition-api';
 import marked from 'marked';
 import firebase from 'firebase';
@@ -86,10 +95,13 @@ import Note from '../../../lib/classes/model/note';
 import Auth from '../../../lib/auth';
 import DeleteDialog from '../../../components/DeleteDialog.vue';
 import ImageDialog from '../../../components/ImageDialog.vue';
+import { db, storage } from '~/lib/firebase';
+import Image from '~/lib/classes/model/image';
+import DeleteImageDialog from '~/components/DeleteImageDialog.vue';
 
 const EditMode = {
   EDIT: 0,
-  CREATE: 1,
+  CREATE: 1
 };
 
 interface DisplayState {
@@ -101,25 +113,27 @@ interface DisplayState {
   editDialog: boolean;
   deleteDialog: boolean;
   imageDialog: boolean;
+  deleteImageDialog: boolean;
 }
 
 interface State {
   item: Note;
   user: firebase.User | null;
+  deleteImage: Image | null;
 }
 
 export default defineComponent({
-  components: { ImageDialog, DeleteDialog, EditDialog },
+  components: { DeleteImageDialog, ImageDialog, DeleteDialog, EditDialog },
   setup(_: {}, context: SetupContext) {
     const id = context.root.$route.params['id'];
-    const firestore = firebase.firestore();
-    const itemsRef = firestore.collection('/items');
+    const itemsRef = db.collection('/items');
 
     const item = new Note();
 
     const state = reactive<State>({
       item,
       user: null,
+      deleteImage: null
     });
 
     let displayState: UnwrapRef<DisplayState>;
@@ -132,6 +146,7 @@ export default defineComponent({
       editDialog: false,
       deleteDialog: false,
       imageDialog: false,
+      deleteImageDialog: false
     });
 
     const getItem = async () => {
@@ -171,11 +186,11 @@ export default defineComponent({
       getItem();
     };
 
-    const imageAdd = async (addFile: string) => {
+    const imageAdd = async (image: Image) => {
       const user = state.user!;
       const ref = itemsRef.doc(user.uid).collection('items');
       await ref.doc(state.item.itemID).update({
-        images: firebase.firestore.FieldValue.arrayUnion(addFile),
+        images: firebase.firestore.FieldValue.arrayUnion(image.toObject())
       });
       getItem();
     };
@@ -192,6 +207,28 @@ export default defineComponent({
       router.push('/home/');
     };
 
+    const openDeleteImageDialog = (image: Image) => {
+      state.deleteImage = image;
+      displayState.deleteImageDialog = true;
+    };
+
+    const deleteImage = async (image: Image) => {
+      const user = state.user!;
+
+      const storageRef = storage.ref(`images/${user.uid}`);
+      await storageRef.child(image.name).delete();
+      const imageObject = new Image(image.name, image.url);
+
+      const ref = itemsRef.doc(user.uid).collection('items');
+      await ref.doc(state.item.itemID).update({
+        images: firebase.firestore.FieldValue.arrayRemove(
+          imageObject.toObject()
+        )
+      });
+      displayState.deleteImageDialog = false;
+      getItem();
+    };
+
     return {
       id,
 
@@ -202,7 +239,9 @@ export default defineComponent({
       editCancel,
       imageAdd,
       deleteItem,
+      openDeleteImageDialog,
+      deleteImage
     };
-  },
+  }
 });
 </script>

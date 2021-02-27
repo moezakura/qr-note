@@ -19,6 +19,7 @@
 <script lang="ts">
 import { defineComponent, SetupContext } from '@vue/composition-api';
 import firebase from 'firebase';
+import { auth } from '~/lib/firebase';
 
 export default defineComponent({
   setup(_: {}, context: SetupContext) {
@@ -27,11 +28,8 @@ export default defineComponent({
       provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
 
       try {
-        const result = await firebase.auth().signInWithPopup(provider);
-        await firebase
-          .auth()
-          .setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-        console.log(result);
+        const result = await auth.signInWithPopup(provider);
+        await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
         const router = context.root.$router;
         router.push('/home/');
