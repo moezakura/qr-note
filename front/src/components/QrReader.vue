@@ -18,7 +18,7 @@
       ></canvas>
     </v-card-text>
     <v-card-actions>
-      <v-btn class="red" block x-large>閉じる</v-btn>
+      <v-btn class="red" block x-large @click="onClickClose">閉じる</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -78,11 +78,7 @@ export default defineComponent({
         const code = jsQR(imageData.data, canvas.width, canvas.height);
         if (code) {
           setupContext.emit('read', code.data);
-          window.clearInterval(state.qrReadInterval);
-          video
-            .value!.srcObject.getTracks()
-            .forEach((track: any) => track.stop());
-          video.value!.srcObject = null;
+          releaseResource();
         }
       } catch (e) {
         console.error(e);
@@ -104,12 +100,25 @@ export default defineComponent({
       }
     });
 
+    const onClickClose = () => {
+      setupContext.emit('close');
+      releaseResource();
+    };
+
+    const releaseResource = () => {
+      window.clearInterval(state.qrReadInterval);
+      video.value!.srcObject.getTracks().forEach((track: any) => track.stop());
+      video.value!.srcObject = null;
+    };
+
     return {
       video,
       qrPreview,
 
       displayState,
       state,
+
+      onClickClose,
     };
   },
 });

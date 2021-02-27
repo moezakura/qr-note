@@ -3,7 +3,11 @@
     <v-btn @click="start()">起動</v-btn>
 
     <v-dialog v-model="displayState.previewDialog" fullscreen>
-      <QrReader v-if="displayState.previewDialog" @read="readQR"></QrReader>
+      <QrReader
+        v-if="displayState.previewDialog"
+        @read="readQR"
+        @close="onClickCloseReader"
+      ></QrReader>
     </v-dialog>
 
     <v-dialog v-model="displayState.qrConfirmDialog" persistent>
@@ -53,6 +57,10 @@ export default defineComponent({
       state.qrData = data;
     };
 
+    const onClickCloseReader = () => {
+      displayState.previewDialog = false;
+    };
+
     const submit = () => {
       const router = context.root.$router;
       const qrData = encodeURIComponent(state.qrData);
@@ -65,6 +73,7 @@ export default defineComponent({
 
       start,
       readQR,
+      onClickCloseReader,
       submit,
     };
   },
