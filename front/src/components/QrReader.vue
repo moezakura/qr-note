@@ -18,7 +18,7 @@
       ></canvas>
     </v-card-text>
     <v-card-actions>
-      <v-btn class="red" block x-large>閉じる</v-btn>
+      <v-btn class="red" block x-large @click="onClickClose">閉じる</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -104,12 +104,18 @@ export default defineComponent({
       }
     });
 
+    const onClickClose = () => {
+      setupContext.emit('close');
+    };
+
     return {
       video,
       qrPreview,
 
       displayState,
       state,
+
+      onClickClose,
     };
   },
 });
