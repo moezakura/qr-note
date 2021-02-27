@@ -109,7 +109,7 @@ export default defineComponent({
       window.clearInterval(state.qrReadInterval);
       video.value!.srcObject.getTracks().forEach((track: any) => track.stop());
       video.value!.srcObject = null;
-    }
+    };
 
     return {
       video,
