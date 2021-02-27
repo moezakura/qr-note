@@ -78,11 +78,7 @@ export default defineComponent({
         const code = jsQR(imageData.data, canvas.width, canvas.height);
         if (code) {
           setupContext.emit('read', code.data);
-          window.clearInterval(state.qrReadInterval);
-          video
-            .value!.srcObject.getTracks()
-            .forEach((track: any) => track.stop());
-          video.value!.srcObject = null;
+          releaseResource();
         }
       } catch (e) {
         console.error(e);
@@ -106,7 +102,14 @@ export default defineComponent({
 
     const onClickClose = () => {
       setupContext.emit('close');
+      releaseResource();
     };
+
+    const releaseResource = () => {
+      window.clearInterval(state.qrReadInterval);
+      video.value!.srcObject.getTracks().forEach((track: any) => track.stop());
+      video.value!.srcObject = null;
+    }
 
     return {
       video,
