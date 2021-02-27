@@ -3,7 +3,7 @@
     <v-btn @click="start()">起動</v-btn>
 
     <v-dialog v-model="displayState.previewDialog" fullscreen>
-      <QrReader @read="readQR" v-if="displayState.previewDialog"></QrReader>
+      <QrReader v-if="displayState.previewDialog" @read="readQR"></QrReader>
     </v-dialog>
 
     <v-dialog v-model="displayState.qrConfirmDialog" persistent>
@@ -36,10 +36,10 @@ export default defineComponent({
   setup(_: {}, context: SetupContext) {
     const displayState = reactive<DisplayState>({
       previewDialog: false,
-      qrConfirmDialog: false
+      qrConfirmDialog: false,
     });
     const state = reactive<State>({
-      qrData: ''
+      qrData: '',
     });
 
     const start = () => {
@@ -65,8 +65,8 @@ export default defineComponent({
 
       start,
       readQR,
-      submit
+      submit,
     };
-  }
+  },
 });
 </script>

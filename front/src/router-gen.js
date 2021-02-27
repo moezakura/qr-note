@@ -2,7 +2,7 @@ const fs = require('fs');
 const { generateRoutes } = require('vue-route-generator');
 
 const code = generateRoutes({
-  pages: './pages'
+  pages: './pages',
 });
 
 const writeCode = code.toString().replace(/@/g, '..');

@@ -16,14 +16,14 @@ Vue.use(Vuetify);
 const router = new VueRouter({
   mode: 'history',
   linkActiveClass: 'active',
-  routes: routes
+  routes: routes,
 });
 
 new Vue({
   el: '#app',
   vuetify: new Vuetify({
-    theme: { dark: true }
+    theme: { dark: true },
   }),
   render: h => h(App),
-  router
+  router,
 });

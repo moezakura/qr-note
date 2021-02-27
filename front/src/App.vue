@@ -13,7 +13,7 @@ export default defineComponent({
   components: { DefaultLayout },
   setup() {
     return {};
-  }
+  },
 });
 </script>
 

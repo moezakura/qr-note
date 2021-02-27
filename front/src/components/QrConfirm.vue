@@ -32,8 +32,8 @@ export default defineComponent({
   props: {
     qrData: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(_: Props, context: SetupContext) {
     const reRead = () => {
@@ -46,9 +46,9 @@ export default defineComponent({
 
     return {
       reRead,
-      submit
+      submit,
     };
-  }
+  },
 });
 </script>
 
