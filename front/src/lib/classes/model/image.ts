@@ -18,7 +18,7 @@ export default class Image {
   public toObject(): any {
     return {
       name: this._name,
-      url: this._url
+      url: this._url,
     };
   }
 }

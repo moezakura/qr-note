@@ -29,8 +29,8 @@ export default defineComponent({
   props: {
     image: {
       type: Object,
-      require: true
-    }
+      require: true,
+    },
   },
   setup(props: Props, context: SetupContext) {
     const close = () => {
@@ -43,9 +43,9 @@ export default defineComponent({
 
     return {
       close,
-      deleteItem
+      deleteItem,
     };
-  }
+  },
 });
 </script>
 

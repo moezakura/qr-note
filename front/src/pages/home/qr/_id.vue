@@ -16,7 +16,9 @@
         </template>
         <template v-else>
           <v-card flat outlined>
+            <!-- eslint-disable vue/no-v-html -->
             <v-card-text v-html="displayState.html"></v-card-text>
+            <!--eslint-enable-->
           </v-card>
         </template>
       </v-card-text>
@@ -86,7 +88,7 @@ import {
   computed,
   SetupContext,
   ComputedRef,
-  UnwrapRef
+  UnwrapRef,
 } from '@vue/composition-api';
 import marked from 'marked';
 import firebase from 'firebase';
@@ -101,7 +103,7 @@ import DeleteImageDialog from '~/components/DeleteImageDialog.vue';
 
 const EditMode = {
   EDIT: 0,
-  CREATE: 1
+  CREATE: 1,
 };
 
 interface DisplayState {
@@ -133,7 +135,7 @@ export default defineComponent({
     const state = reactive<State>({
       item,
       user: null,
-      deleteImage: null
+      deleteImage: null,
     });
 
     let displayState: UnwrapRef<DisplayState>;
@@ -146,7 +148,7 @@ export default defineComponent({
       editDialog: false,
       deleteDialog: false,
       imageDialog: false,
-      deleteImageDialog: false
+      deleteImageDialog: false,
     });
 
     const getItem = async () => {
@@ -176,7 +178,10 @@ export default defineComponent({
       const ref = itemsRef.doc(user.uid).collection('items');
 
       if (displayState.isEdit) {
-        await ref.doc(state.item.itemID).update(item.toObject());
+        const updateItem = item.toObject();
+        delete updateItem.images;
+
+        await ref.doc(state.item.itemID).update(updateItem);
       } else {
         item.id = id;
         item.text = text;
@@ -190,7 +195,7 @@ export default defineComponent({
       const user = state.user!;
       const ref = itemsRef.doc(user.uid).collection('items');
       await ref.doc(state.item.itemID).update({
-        images: firebase.firestore.FieldValue.arrayUnion(image.toObject())
+        images: firebase.firestore.FieldValue.arrayUnion(image.toObject()),
       });
       getItem();
     };
@@ -223,7 +228,7 @@ export default defineComponent({
       await ref.doc(state.item.itemID).update({
         images: firebase.firestore.FieldValue.arrayRemove(
           imageObject.toObject()
-        )
+        ),
       });
       displayState.deleteImageDialog = false;
       getItem();
@@ -240,8 +245,8 @@ export default defineComponent({
       imageAdd,
       deleteItem,
       openDeleteImageDialog,
-      deleteImage
+      deleteImage,
     };
-  }
+  },
 });
 </script>

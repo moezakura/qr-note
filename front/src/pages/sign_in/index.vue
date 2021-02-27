@@ -28,7 +28,7 @@ export default defineComponent({
       provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
 
       try {
-        const result = await auth.signInWithPopup(provider);
+        await auth.signInWithPopup(provider);
         await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
         const router = context.root.$router;
