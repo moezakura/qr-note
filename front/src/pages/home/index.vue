@@ -39,7 +39,7 @@
               size="80"
               color="grey"
             >
-              <v-img :src="i.images[0]"></v-img>
+              <v-img :src="i.images[0].url"></v-img>
             </v-list-item-avatar>
           </v-list-item>
         </v-card>
@@ -107,7 +107,7 @@ export default defineComponent({
       searchedList: computed<Node[]>(() => {
         try {
           const searchText = displayState.searchText.toLowerCase();
-          const searchPattern = new RegExp(searchText);
+          const searchPattern = new RegExp(searchText, 'si');
           return displayState.list.filter(
             item => searchPattern.test(item.text) || searchPattern.test(item.id)
           );
