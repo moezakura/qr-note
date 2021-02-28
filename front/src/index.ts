@@ -8,6 +8,7 @@ import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';
 import '@mdi/font/css/materialdesignicons.css';
 import './lib/firebase';
+import { colors } from 'vuetify/lib';
 
 Vue.use(VueRouter);
 Vue.use(VueCompositionApi);
@@ -22,7 +23,14 @@ const router = new VueRouter({
 new Vue({
   el: '#app',
   vuetify: new Vuetify({
-    theme: { dark: true },
+    theme: {
+      dark: true,
+      themes: {
+        dark: {
+          primary: colors.teal.darken2,
+        },
+      },
+    },
   }),
   render: h => h(App),
   router,
