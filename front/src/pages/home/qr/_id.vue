@@ -45,6 +45,21 @@
       </v-card-actions>
     </v-card>
 
+    <v-row class="my-2">
+      <v-col cols="6">
+        <v-btn x-large block>
+          <v-icon class="mr-1">mdi-plus</v-icon>
+          新しく登録する
+        </v-btn>
+      </v-col>
+      <v-col cols="6">
+        <v-btn x-large block @click="returnHome()">
+          <v-icon class="mr-1">mdi-view-list</v-icon>
+          一覧に戻る
+        </v-btn>
+      </v-col>
+    </v-row>
+
     <v-dialog v-model="displayState.imageDialog" fullscreen>
       <ImageDialog
         :images="displayState.images"
@@ -234,6 +249,11 @@ export default defineComponent({
       getItem();
     };
 
+    const returnHome = async () => {
+      const router = context.root.$router;
+      router.push('/home/');
+    };
+
     return {
       id,
 
@@ -246,6 +266,7 @@ export default defineComponent({
       deleteItem,
       openDeleteImageDialog,
       deleteImage,
+      returnHome,
     };
   },
 });
